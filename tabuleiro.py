@@ -1,27 +1,38 @@
-# # # Gera o tabuleiro # # #
+import os
+from random import randint
+
+# Interface
+def drawTabuleiro(tab):
+    tabuleiro = '''
+|================================================|
+|                 JOGO DA VELHA                  |
+|================================================|
+|                                                |
+|                 A     B     C                  |
+|              +-----+-----+-----+               |
+|          1   |  {}  |  {}  |  {}  |               |
+|              +-----+-----+-----+               |
+|          2   |  {}  |  {}  |  {}  |               |
+|              +-----+-----+-----+               |
+|          3   |  {}  |  {}  |  {}  |               |
+|              +-----+-----+-----+               |
+|                                                |
+|================================================|
+    ''' .format(tab[0][0], tab[0][1], tab[0][2], tab[1][0], tab[1][1], tab[1][2], tab[2][0], tab[2][1], tab[2][2])
+    
+    print(tabuleiro)
+
+# Gera uma matriz 3x3 
 def gerarTabuleiro():
     tabuleiro = [ [' ' for i in range(3)] for j in range(3)]
     return tabuleiro
 
-# # # Desenha o tabuleiro # # #
-def drawTabuleiro(tab):
-    tabuleiro = '''
-    A     B     C
-       |     |   
-1   {}  |  {}  |  {}
-  _____|_____|_____
-       |     |
-2   {}  |  {}  |  {}
-  _____|_____|_____
-       |     |
-3   {}  |  {}  |  {}
-       |     |
-        '''.format(tab[0][0], tab[0][1], tab[0][2], tab[1][0], tab[1][1], tab[1][2], tab[2][0], tab[2][1], tab[2][2])
+# Escolhe aleatoriamente a key do jogador
+def jogador():
+    return 'X' if randint(1, 2) == 1 else 'O'
 
-    print(tabuleiro)
-
-# # # Transforma as letras no index correto.      # # #   
-# # # Diminui 1 do número, pois a matriz é de 0-3 # # #
+# Transforma as letras no index correto.  
+# Diminui 1 do número, pois a matriz é de 0-3 
 def editInput(letra, numero):
     if (letra == "A"):
         letra = 0
@@ -35,26 +46,25 @@ def editInput(letra, numero):
 
     return x, y
 
-# # # Verifica se a posição que o usuário entrou está disponível # # #
-def posicao_disponivel(matriz, x, y): 
+# Verifica se a posição que o usuário entrou está disponível.
+def posicaoDisponivel(matriz, x, y): 
     disponivel = True
-    try:
-        if matriz[x][y] != ' ':
-            disponivel = False
-        return disponivel
-    except IndexError as erro:
-        print(erro)
 
-# # # Atribui um X ou O à posição que o usuário jogou # # #
-def play(matriz, pos, key):
-    if posicao_disponivel(matriz, pos[0], pos[1]):
+    if matriz[x][y] != ' ':
+        disponivel = False
+    return disponivel
+
+# Atribui um X ou O à posição que o usuário jogou.
+def jogada(matriz, pos, key):
+    if posicaoDisponivel(matriz, pos[0], pos[1]):
         matriz[pos[0]][pos[1]] = str(key)
         return True
     else:
         return False
 
-# # # Verifica se deu velha, a key é X ou O # # #
+# Verifica se deu velha, a key é X ou O.
 def velha(tabuleiro, key, x, y):
+    jogando = True
     dp = 0
     ds = 0
     l1 = 0
@@ -97,6 +107,54 @@ def velha(tabuleiro, key, x, y):
 
     # # # Se o contador for == 3, deu velha # # #
     if (dp == 3 or ds == 3 or l1 == 3 or l2 == 3 or l3 == 3 or c1 == 3 or c2 == 3 or c3 == 3):
-        print("Deu velha")
+        jogando = False
+    
+    return jogando
 
+# Se a soma for igual a 5 e não tiver ganhado, deu empate
+def empate(tabuleiro, key):
+    soma = 0
+    for i in range(3):
+        for j in range(3):
+            if (tabuleiro[i][j] == key):
+                soma += 1
+    return soma
 
+# Menu Principal
+# Gera o Tabuleiro e escolhe o jogador uma vez
+# Pede a letra e o número até alguém vencer ou dá empate,
+# então jogando = False 
+def main():
+    jogando = True
+    tabuleiro = gerarTabuleiro()
+    # key = jogador()
+
+    while jogando:
+        # os.system('cls')
+        drawTabuleiro(tabuleiro)
+        try:
+            key = jogador()
+            print(key)
+
+            letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')
+           
+            x, y = editInput(letra, numero)
+
+            if (jogada(tabuleiro, (x, y), key)):
+                print('disponive')
+            else:
+                print('indisponive')
+
+            if not (velha(tabuleiro, key, x, y)):
+                os.system('cls')
+                drawTabuleiro(tabuleiro)
+                print("Você venceu!")
+                jogando = False
+            elif (empate(tabuleiro, key) == 5):
+                os.system('cls')
+                drawTabuleiro(tabuleiro)
+                print("Empate!")
+                jogando = False
+            
+        except ValueError:
+            print("Entre com um a sequência de valores corretos!")

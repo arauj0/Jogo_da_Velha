@@ -2,10 +2,20 @@ import os
 from random import randint
 
 # Interface
-def drawTabuleiro(tab):
-    tabuleiro = '''
+def menu(): 
+    menu = '''
 |================================================|
 |                 JOGO DA VELHA                  |
+|================================================|
+| 1 - 1 jogador                                  |
+| 2 - 2 jogadores                                |
+| 0 - Sair                                       |
+|================================================|                             
+    '''
+    print(menu, end="")
+
+def drawTabuleiro(tab):
+    tabuleiro = '''
 |================================================|
 |                                                |
 |                 A     B     C                  |
@@ -62,12 +72,11 @@ def jogada(matriz, pos, key):
     else:
         return False
 
+# Fica testando uma posição disponível, até retornar True
 def automatico(matriz, key):
     x = randint(0, 2)
     y = randint(0, 2)
     if posicaoDisponivel(matriz, x, y):
-        print(x)
-        print(y)
         matriz[x][y] = str(key)
         return True
 
@@ -134,40 +143,95 @@ def empate(tabuleiro, key):
 # Pede a letra e o número até alguém vencer ou dá empate,
 # então jogando = False 
 def main():
-    jogando = True
+    on = True
     tabuleiro = gerarTabuleiro()
-    # key = jogador()
-    key = 'O'
-    ok = True
-    while jogando:
-        # os.system('cls')
-        drawTabuleiro(tabuleiro)
-        try:
-            # key = jogador()
-            # print(key)
 
-            if (ok):
-                letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')
-           
-            ok = False
-            x, y = editInput(letra, numero)
+    while on:
+        menu()
+        op = int(input("Escolha uma opção: "))
 
-            if not (jogada(tabuleiro, (x, y), key)):
-                print('Posição inválida! Tente outra vez')
-                ok = True
-            else:
-                ok = automatico(tabuleiro, 'X')
+        # # # automático # # #
+        if (op == 1):
+            jogando = True
+            valid = True
+            key = 'O'
 
-            if not (velha(tabuleiro, key, x, y)):
-                os.system('cls')
+            os.system('cls')
+            while jogando:
                 drawTabuleiro(tabuleiro)
-                print("Você venceu!")
-                jogando = False
-            elif (empate(tabuleiro, key) == 4):
-                os.system('cls')
-                drawTabuleiro(tabuleiro)
-                print("Empate!")
-                jogando = False
+                try:
+                    if (valid):
+                        letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')
+                        x, y = editInput(letra, numero)
+                        valid = False
+
+                        if not (jogada(tabuleiro, (x, y), key)):
+                            os.system('cls')
+                            print('Posição inválida! Tente outra vez')
+                            valid = True
+                        else:
+                            os.system('cls')
+                            valid = automatico(tabuleiro, 'X')
                     
-        except ValueError:
-            print("Entre com um a sequência de valores corretos!")
+                    if not (velha(tabuleiro, key, x, y)):
+                        os.system('cls')
+                        drawTabuleiro(tabuleiro)
+                        print("Você venceu!")
+                        jogando = False
+                    elif (empate(tabuleiro, key) == 4):
+                        os.system('cls')
+                        drawTabuleiro(tabuleiro)
+                        print("Empate!")
+                        jogando = False
+                            
+                except ValueError:
+                    os.system('cls')
+                    print("Entre com um a sequência de valores corretos!")
+                    valid = True
+
+        # # # 2 jogadores # # #
+        elif (op == 2):
+            jogando = True
+            valid = True
+
+            os.system('cls')
+            while jogando:
+                drawTabuleiro(tabuleiro)
+                try:
+                    key = jogador()
+                    print(key)
+
+                    if (valid):
+                        letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')
+                        x, y = editInput(letra, numero)
+                        valid = False
+
+                        if not (jogada(tabuleiro, (x, y), key)):
+                            os.system('cls')
+                            print('Posição inválida! Tente outra vez')
+                            valid = True
+                        else:
+                            os.system('cls')  # tirar depois
+
+                            if not (velha(tabuleiro, key, x, y)):
+                                os.system('cls')
+                                drawTabuleiro(tabuleiro)
+                                print("Você venceu!")
+                                jogando = False
+                            elif (empate(tabuleiro, key) == 4):
+                                os.system('cls')
+                                drawTabuleiro(tabuleiro)
+                                print("Empate!")
+                                jogando = False
+                            # Passar a vez para o prox jogador 
+                            
+                except ValueError:
+                    os.system('cls')
+                    print("Entre com um a sequência de valores corretos!")
+
+        # # # Sair # # # 
+        elif (op == 0):
+            on = False
+        else:
+            os.system('cls')
+            print(" \nOpção inválida! Tente novamente.")

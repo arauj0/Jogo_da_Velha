@@ -62,6 +62,15 @@ def jogada(matriz, pos, key):
     else:
         return False
 
+def automatico(matriz, key):
+    x = randint(0, 2)
+    y = randint(0, 2)
+    if posicaoDisponivel(matriz, x, y):
+        print(x)
+        print(y)
+        matriz[x][y] = str(key)
+        return True
+
 # Verifica se deu velha, a key é X ou O.
 def velha(tabuleiro, key, x, y):
     jogando = True
@@ -111,7 +120,7 @@ def velha(tabuleiro, key, x, y):
     
     return jogando
 
-# Se a soma for igual a 5 e não tiver ganhado, deu empate
+# Se a soma for igual a 4 e não tiver ganhado, deu empate
 def empate(tabuleiro, key):
     soma = 0
     for i in range(3):
@@ -128,33 +137,37 @@ def main():
     jogando = True
     tabuleiro = gerarTabuleiro()
     # key = jogador()
-
+    key = 'O'
+    ok = True
     while jogando:
         # os.system('cls')
         drawTabuleiro(tabuleiro)
         try:
-            key = jogador()
-            print(key)
+            # key = jogador()
+            # print(key)
 
-            letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')
+            if (ok):
+                letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')
            
+            ok = False
             x, y = editInput(letra, numero)
 
-            if (jogada(tabuleiro, (x, y), key)):
-                print('disponive')
+            if not (jogada(tabuleiro, (x, y), key)):
+                print('Posição inválida! Tente outra vez')
+                ok = True
             else:
-                print('indisponive')
+                ok = automatico(tabuleiro, 'X')
 
             if not (velha(tabuleiro, key, x, y)):
                 os.system('cls')
                 drawTabuleiro(tabuleiro)
                 print("Você venceu!")
                 jogando = False
-            elif (empate(tabuleiro, key) == 5):
+            elif (empate(tabuleiro, key) == 4):
                 os.system('cls')
                 drawTabuleiro(tabuleiro)
                 print("Empate!")
                 jogando = False
-            
+                    
         except ValueError:
             print("Entre com um a sequência de valores corretos!")

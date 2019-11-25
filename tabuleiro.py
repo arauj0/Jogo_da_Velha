@@ -192,7 +192,6 @@ def main():
         # # # 2 jogadores # # #
         elif (op == 2):
             jogando = True
-            valid = True
 
             os.system('cls')
             while jogando:
@@ -201,29 +200,26 @@ def main():
                     key = jogador()
                     print(key)
 
-                    if (valid):
-                        letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')
-                        x, y = editInput(letra, numero)
-                        valid = False
+                    letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')
+                    x, y = editInput(letra, numero)
 
-                        if not (jogada(tabuleiro, (x, y), key)):
-                            os.system('cls')
-                            print('Posição inválida! Tente outra vez')
-                            valid = True
-                        else:
-                            os.system('cls')  # tirar depois
+                    if not (jogada(tabuleiro, (x, y), key)):
+                        os.system('cls')
+                        print('Posição inválida! Tente outra vez')
+                    else :
+                        os.system('cls')
+                        # no else tem q passar a vez
 
-                            if not (velha(tabuleiro, key, x, y)):
-                                os.system('cls')
-                                drawTabuleiro(tabuleiro)
-                                print("Você venceu!")
-                                jogando = False
-                            elif (empate(tabuleiro, key) == 4):
-                                os.system('cls')
-                                drawTabuleiro(tabuleiro)
-                                print("Empate!")
-                                jogando = False
-                            # Passar a vez para o prox jogador 
+                    if not (velha(tabuleiro, key, x, y)):
+                        os.system('cls')
+                        drawTabuleiro(tabuleiro)
+                        print("Você venceu!")
+                        jogando = False
+                    elif (empate(tabuleiro, key) == 4):
+                        os.system('cls')
+                        drawTabuleiro(tabuleiro)
+                        print("Empate!")
+                        jogando = False
                             
                 except ValueError:
                     os.system('cls')

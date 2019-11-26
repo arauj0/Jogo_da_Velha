@@ -78,7 +78,7 @@ def automatico(matriz, key):
     y = randint(0, 2)
     if posicaoDisponivel(matriz, x, y):
         matriz[x][y] = str(key)
-        return True
+        return '0'
 
 # Verifica se deu velha, a key é X ou O.
 def velha(tabuleiro, key, x, y):

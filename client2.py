@@ -1,24 +1,34 @@
 import socket
-from threading import Thread
+import os
+import sys
+from tabuleiro import menu
 
 host = socket.gethostname()
 port = 10100
 
-# while True:
 try:
-    socketclient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 except socket.error as erro:
     print("Falha ao criar socket")
     print("Erro: %s" % str(erro))
     print("Socket criado!")
 
 try:
-    socketclient.connect((host, port))
+    clientsocket.connect((host, port))
     print("Conectado!")
-    mensagem = socketclient.recv(1024)
-    print(mensagem)
+    while True:
+        menu()
+        op = input("Escolha uma opção: ")
+        clientsocket.send(str(op).encode())
+        os.system('cls')
+        if op == '0':
+            print("Encerrando!")
+            clientsocket.close()
+            sys.exit()
+        else:
+            print(" \nOpção inválida! Tente novamente.")
 except socket.error as erro:
     print("Falha ao conectar a %s na porta %s" % (host, port))
     print("Razão: %s" % str(erro))
 finally:
-    socketclient.close()
+    clientsocket.close()

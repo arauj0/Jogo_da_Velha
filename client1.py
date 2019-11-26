@@ -21,15 +21,25 @@ try:
     while True:
         menu()
         op = input("Escolha uma opção: ")
-        clientsocket.send(str(op).encode())
+        clientsocket.send(op.encode())
         os.system('cls')
 
         if op == '1':
-            jogando = True
-            play = True
+            jogando = False
+            play = False
             
-            key = clientsocket.recv(1024)
-            print(" Você é o ", key.decode())
+            init = clientsocket.recv(5000).decode().split(' ', 1)
+            if (init[0] == '1'):
+                print("Você começa o jogo!")
+                print("Sua letra é", init[1])
+                jogando = True
+                play = True
+            else:
+                print("O automático começa!")
+                print("Sua letra é", init[1])
+                jogando = True
+                play = True
+
             while jogando:
                 try:
                     if (play):
@@ -42,9 +52,13 @@ try:
 
                         valid = clientsocket.recv(1024).decode()
                         print(valid)
-                        # if (valid == '0'):
-                            # print("Vez do computador! Espere!")
-                            # time.sleep(0.5) # Só pra dá a sensação de espera
+                        if (valid == '0'):
+                            os.system('cls')
+                            print("Vez do computador! Espere!")
+                            play = False
+                        else:
+                            os.system('cls')
+                            print("posição inválida! Tente outra vez!")
 
                 except ValueError:
                     os.system('cls')

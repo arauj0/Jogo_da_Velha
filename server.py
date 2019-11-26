@@ -1,8 +1,9 @@
 import socket
 import sys
 import json
-import threading
 import time
+import threading
+from random import randint
 from tabuleiro import gerarTabuleiro, editInput, jogador, jogada, automatico
 
 clientes = []
@@ -36,24 +37,48 @@ def recebeOpcao(client):
             print(type(op), op)
             if op == '1':
                 print("Jogar no automatico")
-                jogando = True
+                jogando = False
+                play = ''
 
+                # Gera o tabuleiro
+                tabuleiro = gerarTabuleiro()
+
+                # Gera o X ou O
                 key = jogador()
-                client.send(key.encode())
                 keyAut ='O' if key == 'X' else 'X'
                 print(keyAut)
-                time.sleep(0.3)
 
-                tabuleiro = gerarTabuleiro()
-                sendTabuleiro(tabuleiro, client)
-
-                # while jogando:
-                # sendTabuleiro(tabuleiro, client)
-                valid = recvPosicao(client, tabuleiro, key)
-                client.send(valid.encode())
-                if (valid == '1'):
-                    sendTabuleiro(tabuleiro, client)
-
+                # Decide quem vai começar o jogo
+                vez = randint(1, 2)
+                if vez == 1: # O cliente começa
+                    vezAut = 2
+                    client.send((str(vez) + " " + key).encode())
+                    jogando = True
+                    play = '0'
+                else: # Servidor começa e avisa pro cliente que o servidor vai começar
+                    vezAut = 1
+                    client.send((str(vez) + " " + key).encode())
+                    validAut = automatico(tabuleiro, keyAut)
+                    if (validAut == '0'):
+                        jogando = True
+                        play = '0'
+                        time.sleep(0.3)
+        
+                # time.sleep(0.3)
+                while jogando:
+                    if (play == '0'):
+                        sendTabuleiro(tabuleiro, client)
+                        valid = recvPosicao(client, tabuleiro, key)
+                        client.send(valid.encode())
+                        play = '1'
+                        if (valid == '0'):
+                            print("posição válida!")
+                            validAut = automatico(tabuleiro, 'X')
+                            if (validAut == '0'):
+                                print(validAut)
+                                play = '0'
+                        else:
+                            print("posição inválida!")
 
             elif op == '2':
                 print("cadastro")

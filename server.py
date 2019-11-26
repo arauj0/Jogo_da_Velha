@@ -38,7 +38,7 @@ def recebeOpcao(client):
             if op == '1':
                 print("Jogar no automatico")
                 jogando = False
-                play = ''
+                play = False
 
                 # Gera o tabuleiro
                 tabuleiro = gerarTabuleiro()
@@ -54,29 +54,29 @@ def recebeOpcao(client):
                     vezAut = 2
                     client.send((str(vez) + " " + key).encode())
                     jogando = True
-                    play = '0'
+                    play = True
                 else: # Servidor começa e avisa pro cliente que o servidor vai começar
                     vezAut = 1
                     client.send((str(vez) + " " + key).encode())
                     validAut = automatico(tabuleiro, keyAut)
-                    if (validAut == '0'):
+                    if (validAut): # Enquanto não achar uma posição disponível, não permite o user jogar 
                         jogando = True
-                        play = '0'
-                        time.sleep(0.3)
-        
-                # time.sleep(0.3)
+                        play = True
+      
+                time.sleep(0.3)
                 while jogando:
-                    if (play == '0'):
+                    if (play):
                         sendTabuleiro(tabuleiro, client)
                         valid = recvPosicao(client, tabuleiro, key)
                         client.send(valid.encode())
-                        play = '1'
+                        play = False
+
                         if (valid == '0'):
                             print("posição válida!")
-                            validAut = automatico(tabuleiro, 'X')
-                            if (validAut == '0'):
+                            validAut = automatico(tabuleiro, keyAut)
+                            if (validAut):
                                 print(validAut)
-                                play = '0'
+                                play = True
                         else:
                             print("posição inválida!")
 

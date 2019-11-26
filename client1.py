@@ -8,16 +8,10 @@ from tabuleiro import menu, drawTabuleiro
 host = socket.gethostname()
 port = 10100
 
-try:
-    clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-except socket.error as erro:
-    print("Falha ao criar socket")
-    print("Erro: %s" % str(erro))
-    print("Socket criado!")
+clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
     clientsocket.connect((host, port))
-    print("Conectado!")
     while True:
         menu()
         op = input("Escolha uma opção: ")
@@ -37,12 +31,17 @@ try:
             else:
                 print("O automático começa!")
                 print("Sua letra é", init[1])
+                time.sleep(0.7)
                 jogando = True
                 play = True
 
             while jogando:
                 try:
                     if (play):
+                        os.system('cls')
+                        print("Sua vez!")
+                        print("Sua letra é", init[1])
+
                         tab = clientsocket.recv(20000)
                         tabuleiro = json.loads(tab.decode())
                         drawTabuleiro(tabuleiro)
@@ -55,14 +54,17 @@ try:
                         if (valid == '0'):
                             os.system('cls')
                             print("Vez do computador! Espere!")
-                            play = False
+                            time.sleep(0.7)
+                            play = True
                         else:
                             os.system('cls')
-                            print("posição inválida! Tente outra vez!")
+                            print("Posição inválida! Tente outra vez!")
+                            print("Sua letra é", init[1])
 
                 except ValueError:
                     os.system('cls')
                     print("Entre com um a sequência de valores corretos!")
+                    print("Sua letra é", init[1])
 
         if op == '0':
             print("Encerrando!")

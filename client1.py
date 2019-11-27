@@ -20,51 +20,43 @@ try:
 
         if op == '1':
             jogando = False
-            play = False
             
             init = clientsocket.recv(5000).decode().split(' ', 1)
             if (init[0] == '1'):
                 print("Você começa o jogo!")
                 print("Sua letra é", init[1])
                 jogando = True
-                play = True
             else:
                 print("O automático começa!")
                 print("Sua letra é", init[1])
                 time.sleep(0.7)
                 jogando = True
-                play = True
 
             while jogando:
-                try:
-                    if (play):
-                        os.system('cls')
-                        print("Sua vez!")
-                        print("Sua letra é", init[1])
+                os.system('cls')
+                print("Sua vez!")
+                print("Sua letra é", init[1])
 
-                        tab = clientsocket.recv(20000)
-                        tabuleiro = json.loads(tab.decode())
-                        drawTabuleiro(tabuleiro)
+                tab = clientsocket.recv(20000)
+                tabuleiro = json.loads(tab.decode())
+                drawTabuleiro(tabuleiro)
 
-                        letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')  
-                        clientsocket.send((letra + " " + numero).encode())   
+                letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')  
+                clientsocket.send((letra + " " + numero).encode())   
 
-                        valid = clientsocket.recv(1024).decode()
-                        print(valid)
-                        if (valid == '0'):
-                            os.system('cls')
-                            print("Vez do computador! Espere!")
-                            time.sleep(0.7)
-                            play = True
-                        else:
-                            os.system('cls')
-                            print("Posição inválida! Tente outra vez!")
-                            print("Sua letra é", init[1])
-
-                except ValueError:
+                valid = clientsocket.recv(1024).decode()
+                if (valid == '0'):
                     os.system('cls')
-                    print("Entre com um a sequência de valores corretos!")
+                    print("Vez do computador! Espere!")
+                    time.sleep(0.7)
+                    jogando = True
+                else:
+                    os.system('cls')
+                    print(valid)
+                    print("Posição inválida! Tente outra vez!")
                     print("Sua letra é", init[1])
+                    time.sleep(0.5)
+                    jogando = True
 
         if op == '0':
             print("Encerrando!")

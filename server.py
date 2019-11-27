@@ -38,7 +38,6 @@ def recebeOpcao(client):
             if op == '1':
                 print("Jogar no automatico")
                 jogando = False
-                play = False
 
                 # Gera o tabuleiro
                 tabuleiro = gerarTabuleiro()
@@ -54,31 +53,25 @@ def recebeOpcao(client):
                     vezAut = 2
                     client.send((str(vez) + " " + key).encode())
                     jogando = True
-                    play = True
                 else: # Servidor começa e avisa pro cliente que o servidor vai começar
                     vezAut = 1
                     client.send((str(vez) + " " + key).encode())
                     validAut = automatico(tabuleiro, keyAut)
                     if (validAut): # Enquanto não achar uma posição disponível, não permite o user jogar 
                         jogando = True
-                        play = True
       
                 time.sleep(0.3)
                 while jogando:
-                    if (play):
-                        sendTabuleiro(tabuleiro, client)
-                        valid = recvPosicao(client, tabuleiro, key)
-                        client.send(valid.encode())
-                        play = False
+                    sendTabuleiro(tabuleiro, client)
+                    valid = recvPosicao(client, tabuleiro, key)
+                    client.send(valid.encode())
 
-                        if (valid == '0'):
-                            print("posição válida!")
-                            validAut = automatico(tabuleiro, keyAut)
-                            if (validAut):
-                                print(validAut)
-                                play = True
-                        else:
-                            print("posição inválida!")
+                    if (valid == '0'):
+                        print("posição válida!")
+                        validAut = automatico(tabuleiro, keyAut)
+                        if (validAut):
+                            print(validAut)
+                            jogando = True
 
             elif op == '2':
                 print("cadastro")

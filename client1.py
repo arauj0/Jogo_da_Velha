@@ -75,27 +75,52 @@ try:
 
             time.sleep(0.5)
             jogando = False
+            suavez = False
 
             init = clientsocket.recv(5000).decode().split(' ', 1)
             if (init[0] == '1'):
                 print("Você começa o jogo!")
                 print("Sua letra é", init[1])
+                suavez = True
                 jogando = True
+                # time.sleep(0.5)
+                # tab = clientsocket.recv(20000)
+                # tabuleiro = json.loads(tab.decode())
+                # drawTabuleiro(tabuleiro)
             else:
                 print("O outro jogador vai começar!")
                 print("Sua letra é", init[1])
                 time.sleep(0.8)
+                suavez = False
                 jogando = True
 
             time.sleep(0.5)
-            # while jogando:
-            #     os.system('cls')
-            #     print("Sua vez!")
-            #     print("Sua letra é", init[1])
+            while jogando:
+                if suavez:
+                    tab = clientsocket.recv(20000)
+                    tabuleiro = json.loads(tab.decode())
+                    os.system('cls')
+                    print("Sua vez!")
+                    print("Sua letra é", init[1])
+                    drawTabuleiro(tabuleiro)
 
-            tab = clientsocket.recv(20000)
-            tabuleiro = json.loads(tab.decode())
-            drawTabuleiro(tabuleiro)
+                    letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')  
+                    clientsocket.send((letra + " " + numero).encode())
+
+                    valid = clientsocket.recv(1024).decode()
+                    if (valid == '0'):
+                        os.system('cls')
+                        print("Vez do oponente! Espere!")
+                        jogando = False
+                    else:
+                        os.system('cls')
+                        print("Posição inválida! Tente outra vez!")
+                        print("Sua letra é", init[1])
+                        time.sleep(0.5)
+                        jogando = True
+                else:
+                    jogando = False
+
 
         elif op == '0':
             print("Encerrando!")

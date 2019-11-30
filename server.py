@@ -22,7 +22,6 @@ def sendTabuleiro(tabuleiro, client):
 def recvPosicao(client, tabuleiro, key):
     pos = client.recv(5000).decode().split(' ', 1)
     x, y = editInput(pos[0], pos[1])
-    print(x, y)
 
     # Se for 0 a posição é válida
     if not (jogada(tabuleiro, (x, y), key)):
@@ -32,18 +31,6 @@ def recvPosicao(client, tabuleiro, key):
     
     return valid
 
-# def venceu(tabuleiro, key, x, y):
-#     if not (velha(tabuleiro, key, x, y)):
-#         venceu = '1'
-#         jogando = False
-#     elif (empate(tabuleiro, key) == 4):
-#         venceu = '2'
-#         jogando = False
-#     else:
-#         venceu = '0' #continua o jogo
-    
-#     return venceu
-
 def recebeOpcao(client):
     try:
         while True:
@@ -52,7 +39,6 @@ def recebeOpcao(client):
             if op == '1':
                 print("Jogar no automatico")
                 jogando = False
-                venceu = ''
 
                 # Gera o tabuleiro
                 tabuleiro = gerarTabuleiro()
@@ -88,12 +74,53 @@ def recebeOpcao(client):
                             print(validAut)
                             jogando = True
 
-                    # time.sleep(0.3)
-                    # client.send(venceu.encode())
-
-
             elif op == '2':
-                print("cadastro")
+                print("2 jogadores")
+                jogando = False
+                
+                if not clientes:
+                    print("está vazio")
+                    search = '1'
+                else:
+                    print("Não está vazio")
+                    search = '0'
+                    clientes[0].send('0'.encode()) # Avisa ao jogador q estava esperando
+                
+                clientes.append(client)
+                client.send(search.encode())
+
+                if search == '0':
+                    # Gera o tabuleiro
+                    tabuleiro = gerarTabuleiro()
+
+                    # Gera o X ou O
+                    key1 = jogador()
+                    key2 ='O' if key1 == 'X' else 'X'
+
+                    # Decide quem vai começar o jogo
+                    vez = randint(1, 2)
+                    if vez == 1: # O cliente[0] começa
+                        clientes[0].send((str(vez) + " " + key1).encode())
+                        clientes[1].send(('2' + " " + key2).encode())
+                    else: # O cliente[1] começa
+                        clientes[1].send(('1' + " " + key2).encode())
+                        clientes[0].send((str(vez) + " " + key1).encode())
+                    
+                    jogando = True
+                    time.sleep(0.5)
+                    # while jogando:
+                    for client in clientes:
+                        sendTabuleiro(tabuleiro, client)
+                        # valid = recvPosicao(client, tabuleiro, key)
+                        # client.send(valid.encode())
+
+                        # if (valid == '0'):
+                        #     print("posição válida!")
+                        #     validAut = automatico(tabuleiro, keyAut)
+                        #     if (validAut):
+                        #         print(validAut)
+                        #         jogando = True
+
             elif op == '0':
                 print("Encerrando!")
                 client.close()
@@ -107,7 +134,6 @@ while True:
     try:
         client, addr = serversocket.accept()
         print("conexão aceita")
-        clientes.append(client)
         threading.Thread(target=recebeOpcao, args=(client,)).start()
     except KeyboardInterrupt as erro:
         print(erro)

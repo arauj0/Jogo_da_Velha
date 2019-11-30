@@ -16,7 +16,7 @@ try:
         menu()
         op = input("Escolha uma opção: ")
         clientsocket.send(op.encode())
-        os.system('cls')
+        # os.system('cls')
 
         if op == '1':
             jogando = False
@@ -58,11 +58,46 @@ try:
                     time.sleep(0.5)
                     jogando = True
 
-                # venceu = clientsocket.recv(1024).decode()
-                # time.sleep(1)
-                # print(venceu)
+        elif op == '2':
+            print("2 jogadores")
+            search = clientsocket.recv(1024).decode()
 
-        if op == '0':
+            if search == '1':
+               print("Procurando Jogador...")
+               espera = True
+               while espera:
+                   resposta = clientsocket.recv(1024).decode()
+                   if resposta == '0':
+                       print("Jogador Encontrado! Sorteando quem vai começar!")
+                       espera = False
+            else:
+                print("A partida já vai começar! Sorteando quem vai começar!")
+
+            time.sleep(0.5)
+            jogando = False
+
+            init = clientsocket.recv(5000).decode().split(' ', 1)
+            if (init[0] == '1'):
+                print("Você começa o jogo!")
+                print("Sua letra é", init[1])
+                jogando = True
+            else:
+                print("O outro jogador vai começar!")
+                print("Sua letra é", init[1])
+                time.sleep(0.8)
+                jogando = True
+
+            time.sleep(0.5)
+            # while jogando:
+            #     os.system('cls')
+            #     print("Sua vez!")
+            #     print("Sua letra é", init[1])
+
+            tab = clientsocket.recv(20000)
+            tabuleiro = json.loads(tab.decode())
+            drawTabuleiro(tabuleiro)
+
+        elif op == '0':
             print("Encerrando!")
             clientsocket.close()
             sys.exit()

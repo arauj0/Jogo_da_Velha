@@ -76,9 +76,17 @@ def jogada(matriz, pos, key):
 def automatico(matriz, key):
     x = randint(0, 2)
     y = randint(0, 2)
-    if posicaoDisponivel(matriz, x, y):
-        matriz[x][y] = str(key)
-        return True
+    vaga = True
+    ok = False
+    while vaga:
+        if posicaoDisponivel(matriz, x, y):
+            matriz[x][y] = str(key)
+            ok = True
+            vaga = False
+        else:
+            vaga = True
+        
+    return ok
 
 # Verifica se deu velha, a key é X ou O.
 def velha(tabuleiro, key, x, y):

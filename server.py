@@ -4,7 +4,7 @@ import json
 import time
 import threading
 from random import randint
-from tabuleiro import gerarTabuleiro, editInput, jogador, jogada, automatico
+from tabuleiro import gerarTabuleiro, editInput, jogador, jogada, automatico, velha, empate
 
 clientes = []
 
@@ -26,9 +26,23 @@ def recvPosicao(client, tabuleiro, key):
 
     # Se for 0 a posição é válida
     if not (jogada(tabuleiro, (x, y), key)):
-        return '1'
+        valid = '1'
     else:
-        return '0'
+        valid = '0'
+    
+    return valid
+
+# def venceu(tabuleiro, key, x, y):
+#     if not (velha(tabuleiro, key, x, y)):
+#         venceu = '1'
+#         jogando = False
+#     elif (empate(tabuleiro, key) == 4):
+#         venceu = '2'
+#         jogando = False
+#     else:
+#         venceu = '0' #continua o jogo
+    
+#     return venceu
 
 def recebeOpcao(client):
     try:
@@ -38,6 +52,7 @@ def recebeOpcao(client):
             if op == '1':
                 print("Jogar no automatico")
                 jogando = False
+                venceu = ''
 
                 # Gera o tabuleiro
                 tabuleiro = gerarTabuleiro()
@@ -72,6 +87,10 @@ def recebeOpcao(client):
                         if (validAut):
                             print(validAut)
                             jogando = True
+
+                    # time.sleep(0.3)
+                    # client.send(venceu.encode())
+
 
             elif op == '2':
                 print("cadastro")

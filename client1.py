@@ -58,6 +58,10 @@ try:
                     time.sleep(0.5)
                     jogando = True
 
+                # venceu = clientsocket.recv(1024).decode()
+                # time.sleep(1)
+                # print(venceu)
+
         if op == '0':
             print("Encerrando!")
             clientsocket.close()

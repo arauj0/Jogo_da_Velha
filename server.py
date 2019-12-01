@@ -79,17 +79,17 @@ def recebeOpcao(client):
                 print("2 jogadores")
                 
                 if not clientes:
-                    print("está vazio")
                     search = '1'
                 else:
-                    print("Não está vazio")
                     search = '0'
                     clientes[0].send('0'.encode()) # Avisa ao jogador q estava esperando
                 
                 clientes.append(client)
                 client.send(search.encode())
 
-                if search == '0':
+                if search == '1': # MISERAAAAAAAAAAAAA
+                    time.sleep(120) # espera 2 min, se não conectar nenhum jogador, ele avisa
+                else:
                     jogando1 = False
                     jogando2 = False
 
@@ -126,7 +126,7 @@ def recebeOpcao(client):
                     jogando1 = True
                     jogando2 = False
                     while jogando1:
-                        time.sleep(0.5)
+                        time.sleep(0.8)
                         sendTabuleiro(tabuleiro, jogador1)
                         print("Recebendo dados do jogador1")
                         valid = recvPosicao(jogador1, tabuleiro, key1)
@@ -138,11 +138,12 @@ def recebeOpcao(client):
                             if passarvez == '3':
                                 print("Passou a vez")
                                 jogador2.send("3".encode())
+                                time.sleep(0.5)
                                 jogando2 = True
                                 jogando1 = False
                     
                     while jogando2:
-                        time.sleep(0.5)
+                        time.sleep(0.8)
                         sendTabuleiro(tabuleiro, jogador2)
                         print("Recebendo dados do jogador2")
                         valid = recvPosicao(jogador2, tabuleiro, key2)
@@ -154,6 +155,7 @@ def recebeOpcao(client):
                             if passarvez == '3':
                                 print("Passou a vez")
                                 jogador1.send("3".encode())
+                                time.sleep(0.5)
                                 jogando1 = True
                                 jogando2 = False
 

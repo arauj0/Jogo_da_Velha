@@ -15,17 +15,17 @@ serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serversocket.bind((host, port))
 serversocket.listen(10)
 
-def sendTabuleiro(tabuleiro, client):
-    tab = json.dumps(tabuleiro)
-    client.send(tab.encode())
+def sendTabuleiro(tabul, cliente):
+    tab = json.dumps(tabul)
+    cliente.send(tab.encode())
 
-def recvPosicao(client, tabuleiro, key):
-    pos = client.recv(5000).decode().split(' ', 1)
-    x, y = editInput(pos[0], pos[1])
+def recvPosicao(cliente, tabuleiro, chave):
+    posicao = cliente.recv(5000).decode().split(' ', 1)
+    x, y = editInput(posicao[0], posicao[1])
     print(x, y)
 
     # Se for 0 a posição é válida
-    if not (jogada(tabuleiro, (x, y), key)):
+    if not (jogada(tabuleiro, (x, y), chave)):
         valid = '1'
     else:
         valid = '0'
@@ -101,49 +101,61 @@ def recebeOpcao(client):
                     key2 ='O' if key1 == 'X' else 'X'
 
                     # Decide quem vai começar o jogo
-                    vez = randint(1, 2)
-                    if vez == 1: # O cliente[0] começa
-                        clientes[0].send(('1' + " " + key1).encode())
-                        clientes[1].send(('2' + " " + key2).encode())
+                    vez1 = randint(1, 2)
+                    vez2 = 2 if vez1 == 1 else 1
+
+                    print("Jogador 1: ", key1, vez1)
+                    print("Jogador 2: ", key2, vez2)
+
+                    clientes[0].send((str(vez1) + " " + key1).encode())
+                    clientes[1].send((str(vez2) + " " + key2).encode())
+
+                    if vez1 == 1:
+                        print("O jogador 1 vai começar!")
+                        jogador1 = clientes[0]
+                        jogador2 = clientes[1] 
+                        key_1 = key1
+                        key_2 = key2
+                    else:
+                        print("O jogador 2 vai começar!")
+                        jogador1 = clientes[1]
+                        jogador2 = clientes[0]
+                        key_1 = key2
+                        key_2 = key1
+        
+                    jogando1 = True
+                    jogando2 = False
+                    while jogando1:
                         time.sleep(0.5)
-                        sendTabuleiro(tabuleiro, clientes[0])
-                        # jogando1 = True
-                        print("Recebendo dados do jogador 1")
-                        time.sleep(1)
-                        valid1 = recvPosicao(clientes[0], tabuleiro, key1)
-                        clientes[0].send(valid1.encode())
+                        sendTabuleiro(tabuleiro, jogador1)
+                        print("Recebendo dados do jogador1")
+                        valid = recvPosicao(jogador1, tabuleiro, key1)
+                        jogador1.send(valid.encode())
 
-                        if (valid1 == '0'):
+                        if (valid == '0'):
                             print("posição válida!")
-                    else: # O cliente[1] começa
-                        clientes[1].send(('1' + " " + key2).encode())
-                        clientes[0].send(('2' + " " + key1).encode())
+                            passarvez = jogador1.recv(1024).decode()
+                            if passarvez == '3':
+                                print("Passou a vez")
+                                jogador2.send("3".encode())
+                                jogando2 = True
+                                jogando1 = False
+                    
+                    while jogando2:
                         time.sleep(0.5)
-                        sendTabuleiro(tabuleiro, clientes[1])
-                        # jogando2 = True
-                        print("Recebendo dados do jogador 2")
-                        valid2 = recvPosicao(clientes[1], tabuleiro, key2)
-                        clientes[1].send(valid2.encode())
+                        sendTabuleiro(tabuleiro, jogador2)
+                        print("Recebendo dados do jogador2")
+                        valid = recvPosicao(jogador2, tabuleiro, key2)
+                        jogador2.send(valid.encode())
 
-                        if (valid2 == '0'):
+                        if (valid == '0'):
                             print("posição válida!")
-
-                    # while jogando1:
-                    #     print("Recebendo dados do jogador 1")
-                    #     time.sleep(1)
-                    #     valid1 = recvPosicao(clientes[0], tabuleiro, key1)
-                    #     clientes[0].send(valid1.encode())
-
-                    #     if (valid1 == '0'):
-                    #         print("posição válida!")
-
-                    # while jogando2:
-                    #     print("Recebendo dados do jogador 2")
-                    #     valid2 = recvPosicao(clientes[1], tabuleiro, key2)
-                    #     clientes[1].send(valid2.encode())
-
-                    #     if (valid2 == '0'):
-                    #         print("posição válida!")
+                            passarvez = jogador2.recv(1024).decode()
+                            if passarvez == '3':
+                                print("Passou a vez")
+                                jogador1.send("3".encode())
+                                jogando1 = True
+                                jogando2 = False
 
             elif op == '0':
                 print("Encerrando!")

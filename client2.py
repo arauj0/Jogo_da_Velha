@@ -60,6 +60,8 @@ try:
 
         elif op == '2':
             print("2 jogadores")
+            jogando = False
+            suavez = False
             search = clientsocket.recv(1024).decode()
 
             if search == '1':
@@ -73,28 +75,26 @@ try:
             else:
                 print("A partida já vai começar! Sorteando quem vai começar!")
 
-            time.sleep(0.5)
-            jogando = False
-            suavez = False
+            # time.sleep(0.5)
 
             init = clientsocket.recv(5000).decode().split(' ', 1)
             if (init[0] == '1'):
                 print("Você começa o jogo!")
                 print("Sua letra é", init[1])
+                time.sleep(0.5)
                 suavez = True
                 jogando = True
-                # time.sleep(0.5)
                 # tab = clientsocket.recv(20000)
                 # tabuleiro = json.loads(tab.decode())
                 # drawTabuleiro(tabuleiro)
             else:
                 print("O outro jogador vai começar!")
                 print("Sua letra é", init[1])
-                time.sleep(0.8)
+                time.sleep(0.5)
                 suavez = False
                 jogando = True
 
-            time.sleep(0.5)
+            # time.sleep(0.5)
             while jogando:
                 if suavez:
                     tab = clientsocket.recv(20000)
@@ -103,7 +103,6 @@ try:
                     print("Sua vez!")
                     print("Sua letra é", init[1])
                     drawTabuleiro(tabuleiro)
-
                     letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')  
                     clientsocket.send((letra + " " + numero).encode())
 
@@ -111,7 +110,8 @@ try:
                     if (valid == '0'):
                         os.system('cls')
                         print("Vez do oponente! Espere!")
-                        jogando = False
+                        clientsocket.send('3'.encode())
+                        suavez = False
                     else:
                         os.system('cls')
                         print("Posição inválida! Tente outra vez!")
@@ -119,8 +119,29 @@ try:
                         time.sleep(0.5)
                         jogando = True
                 else:
-                    jogando = False
+                    minhavez = clientsocket.recv(1024).decode()
+                    if minhavez == '3':
+                        tab = clientsocket.recv(20000)
+                        tabuleiro = json.loads(tab.decode())
+                        os.system('cls')
+                        print("Sua vez!")
+                        print("Sua letra é", init[1])
+                        drawTabuleiro(tabuleiro)
+                        letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')  
+                        clientsocket.send((letra + " " + numero).encode())
 
+                        valid = clientsocket.recv(1024).decode()
+                        if (valid == '0'):
+                            os.system('cls')
+                            print("Vez do oponente! Espere!")
+                            clientsocket.send('3'.encode())
+                            suavez = False
+                        else:
+                            os.system('cls')
+                            print("Posição inválida! Tente outra vez!")
+                            print("Sua letra é", init[1])
+                            time.sleep(0.5)
+                            jogando = True
 
         elif op == '0':
             print("Encerrando!")

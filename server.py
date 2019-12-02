@@ -137,6 +137,7 @@ def recebeOpcao(client):
                             passarvez = jogador1.recv(1024).decode()
                             if passarvez == '3':
                                 print("Passou a vez")
+                                time.sleep(0.5)
                                 jogador2.send("3".encode())
                                 time.sleep(0.5)
                                 jogando2 = True
@@ -154,6 +155,7 @@ def recebeOpcao(client):
                             passarvez = jogador2.recv(1024).decode()
                             if passarvez == '3':
                                 print("Passou a vez")
+                                time.sleep(0.5)
                                 jogador1.send("3".encode())
                                 time.sleep(0.5)
                                 jogando1 = True

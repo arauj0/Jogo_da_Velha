@@ -92,6 +92,7 @@ def recebeOpcao(client):
                 else:
                     jogando1 = False
                     jogando2 = False
+                    jogo = False
 
                     # Gera o tabuleiro
                     tabuleiro = gerarTabuleiro()
@@ -125,41 +126,44 @@ def recebeOpcao(client):
         
                     jogando1 = True
                     jogando2 = False
-                    while jogando1:
-                        time.sleep(0.8)
-                        sendTabuleiro(tabuleiro, jogador1)
-                        print("Recebendo dados do jogador1")
-                        valid = recvPosicao(jogador1, tabuleiro, key1)
-                        jogador1.send(valid.encode())
+                    jogo = True
 
-                        if (valid == '0'):
-                            print("posição válida!")
-                            passarvez = jogador1.recv(1024).decode()
-                            if passarvez == '3':
-                                print("Passou a vez")
-                                time.sleep(0.5)
-                                jogador2.send("3".encode())
-                                time.sleep(0.5)
-                                jogando2 = True
-                                jogando1 = False
-                    
-                    while jogando2:
-                        time.sleep(0.8)
-                        sendTabuleiro(tabuleiro, jogador2)
-                        print("Recebendo dados do jogador2")
-                        valid = recvPosicao(jogador2, tabuleiro, key2)
-                        jogador2.send(valid.encode())
+                    while jogo:
+                        while jogando1:
+                            time.sleep(0.8)
+                            sendTabuleiro(tabuleiro, jogador1)
+                            print("Recebendo dados do jogador1")
+                            valid = recvPosicao(jogador1, tabuleiro, key1)
+                            jogador1.send(valid.encode())
 
-                        if (valid == '0'):
-                            print("posição válida!")
-                            passarvez = jogador2.recv(1024).decode()
-                            if passarvez == '3':
-                                print("Passou a vez")
-                                time.sleep(0.5)
-                                jogador1.send("3".encode())
-                                time.sleep(0.5)
-                                jogando1 = True
-                                jogando2 = False
+                            if (valid == '0'):
+                                print("posição válida!")
+                                passarvez = jogador1.recv(1024).decode()
+                                if passarvez == '3':
+                                    print("Passou a vez")
+                                    time.sleep(0.5)
+                                    jogador2.send("3".encode())
+                                    # time.sleep(0.5)
+                                    jogando2 = True
+                                    jogando1 = False
+                        
+                        while jogando2:
+                            time.sleep(0.8)
+                            sendTabuleiro(tabuleiro, jogador2)
+                            print("Recebendo dados do jogador2")
+                            valid = recvPosicao(jogador2, tabuleiro, key2)
+                            jogador2.send(valid.encode())
+
+                            if (valid == '0'):
+                                print("posição válida!")
+                                passarvez = jogador2.recv(1024).decode()
+                                if passarvez == '3':
+                                    print("Passou a vez")
+                                    time.sleep(0.5)
+                                    jogador1.send("3".encode())
+                                    # time.sleep(0.5)
+                                    jogando1 = True
+                                    jogando2 = False
 
             elif op == '0':
                 print("Encerrando!")

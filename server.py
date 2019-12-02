@@ -124,13 +124,14 @@ def recebeOpcao(client):
                         key_1 = key2
                         key_2 = key1
         
+                    time.sleep(0.9)
                     jogando1 = True
                     jogando2 = False
                     jogo = True
 
                     while jogo:
                         while jogando1:
-                            time.sleep(0.8)
+                            time.sleep(0.5)
                             sendTabuleiro(tabuleiro, jogador1)
                             print("Recebendo dados do jogador1")
                             valid = recvPosicao(jogador1, tabuleiro, key1)
@@ -148,7 +149,7 @@ def recebeOpcao(client):
                                     jogando1 = False
                         
                         while jogando2:
-                            time.sleep(0.8)
+                            time.sleep(0.5)
                             sendTabuleiro(tabuleiro, jogador2)
                             print("Recebendo dados do jogador2")
                             valid = recvPosicao(jogador2, tabuleiro, key2)

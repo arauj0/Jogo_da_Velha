@@ -63,6 +63,7 @@ try:
             search = clientsocket.recv(1024).decode()
 
             if search == '1':
+               os.system('cls') 
                print("Procurando Jogador...")
                espera = True
                while espera:
@@ -71,20 +72,23 @@ try:
                        print("Jogador Encontrado! Sorteando quem vai começar!")
                        espera = False
             else:
+                os.system('cls')
                 print("A partida já vai começar! Sorteando quem vai começar!")
 
-            # time.sleep(0.5)
+            time.sleep(1)
             suavez = False
             oponente = False
             jogando = False
             init = clientsocket.recv(5000).decode().split(' ', 1)
             if (init[0] == '1'):
+                os.system('cls')
                 print("Você começa o jogo!")
                 print("Sua letra é", init[1])
                 time.sleep(0.5)
                 suavez = True
                 jogando = True
             else:
+                os.system('cls')
                 print("O outro jogador vai começar!")
                 print("Sua letra é", init[1])
                 time.sleep(0.5)
@@ -93,25 +97,20 @@ try:
 
             # time.sleep(0.5)
             while jogando:
-                print(suavez)
-                print(oponente)
                 while suavez:
-                    print("entrei 2")
                     time.sleep(0.8)
                     tab = clientsocket.recv(20000)
                     tabuleiro = json.loads(tab.decode())
-                    # os.system('cls')
+                    os.system('cls')
                     print("Sua vez!")
                     print("Sua letra é", init[1])
-                    time.sleep(0.8)
-                    print(type(tabuleiro), tabuleiro)
                     drawTabuleiro(tabuleiro)
                     letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')  
                     clientsocket.send((letra + " " + numero).encode())
 
                     valid = clientsocket.recv(1024).decode()
                     if (valid == '0'):
-                        # os.system('cls')
+                        os.system('cls')
                         print("Vez do oponente! Espere!")
                         clientsocket.send('3'.encode())
                         oponente = True
@@ -125,37 +124,11 @@ try:
                         suavez = True   
 
                 while oponente:
-                    print("entrei")
                     minhavez = clientsocket.recv(1024).decode()
                     if minhavez == '3':
-                        print("sai")
                         oponente = False
                         suavez = True 
                         break
-                        print("ohayo")
-
-                    # else:
-                    #     tab = clientsocket.recv(20000)
-                    #     tabuleiro = json.loads(tab.decode())
-                    #     # os.system('cls')
-                    #     print("Sua vez!")
-                    #     print("Sua letra é", init[1])
-                    #     drawTabuleiro(tabuleiro)
-                    #     letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')  
-                    #     clientsocket.send((letra + " " + numero).encode())
-
-                    #     valid = clientsocket.recv(1024).decode()
-                    #     if (valid == '0'):
-                    #         # os.system('cls')
-                    #         print("Vez do oponente! Espere!")
-                    #         clientsocket.send('3'.encode())
-                    #         jogando = False
-                    #     else:
-                    #         os.system('cls')
-                    #         print("Posição inválida! Tente outra vez!")
-                    #         print("Sua letra é", init[1])
-                    #         time.sleep(0.5)
-                    #         jogando = True   
 
         elif op == '0':
             print("Encerrando!")

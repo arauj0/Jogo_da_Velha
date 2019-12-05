@@ -19,16 +19,21 @@ def sendTabuleiro(tabul, cliente):
     tab = json.dumps(tabul)
     cliente.send(tab.encode())
 
-def recvPosicao(cliente, tabuleiro, chave):
+def recvPosicao(cliente, tabuleiro, chave1, chave2):
     posicao = cliente.recv(5000).decode().split(' ', 1)
     x, y = editInput(posicao[0], posicao[1])
     print(x, y)
 
     # Se for 0 a posição é válida
-    if not (jogada(tabuleiro, (x, y), chave)):
+    if not (jogada(tabuleiro, (x, y), chave1)):
         valid = '1'
     else:
         valid = '0'
+        if not (velha(tabuleiro, chave1, x, y)):
+            print(x, y)
+            print("Você venceu!")
+        elif (empate(tabuleiro, chave1) == 4 and empate(tabuleiro, chave2) == 4):
+            print("Empate")
     
     return valid
 
@@ -65,7 +70,7 @@ def recebeOpcao(client):
                 time.sleep(0.3)
                 while jogando:
                     sendTabuleiro(tabuleiro, client)
-                    valid = recvPosicao(client, tabuleiro, key)
+                    valid = recvPosicao(client, tabuleiro, key, keyAut) # Adicionei a chave 2
                     client.send(valid.encode())
 
                     if (valid == '0'):
@@ -134,7 +139,7 @@ def recebeOpcao(client):
                             time.sleep(0.5)
                             sendTabuleiro(tabuleiro, jogador1)
                             print("Recebendo dados do jogador1")
-                            valid = recvPosicao(jogador1, tabuleiro, key1)
+                            valid = recvPosicao(jogador1, tabuleiro, key_1, key_2)
                             jogador1.send(valid.encode())
 
                             if (valid == '0'):
@@ -152,7 +157,7 @@ def recebeOpcao(client):
                             time.sleep(0.5)
                             sendTabuleiro(tabuleiro, jogador2)
                             print("Recebendo dados do jogador2")
-                            valid = recvPosicao(jogador2, tabuleiro, key2)
+                            valid = recvPosicao(jogador2, tabuleiro, key_2, key_1)
                             jogador2.send(valid.encode())
 
                             if (valid == '0'):

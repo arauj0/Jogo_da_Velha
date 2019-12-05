@@ -59,7 +59,6 @@ try:
                     jogando = True
 
         elif op == '2':
-            print("2 jogadores")
             search = clientsocket.recv(1024).decode()
 
             if search == '1':
@@ -84,21 +83,21 @@ try:
                 os.system('cls')
                 print("Você começa o jogo!")
                 print("Sua letra é", init[1])
-                time.sleep(0.5)
+                time.sleep(1)
                 suavez = True
                 jogando = True
             else:
                 os.system('cls')
                 print("O outro jogador vai começar!")
                 print("Sua letra é", init[1])
-                time.sleep(0.5)
+                time.sleep(1)
                 oponente = True
                 jogando = True
 
             # time.sleep(0.5)
             while jogando:
                 while suavez:
-                    time.sleep(0.8)
+                    # time.sleep(0.3)
                     tab = clientsocket.recv(20000)
                     tabuleiro = json.loads(tab.decode())
                     os.system('cls')

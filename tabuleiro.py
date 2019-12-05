@@ -44,11 +44,11 @@ def jogador():
 # Transforma as letras no index correto.  
 # Diminui 1 do número, pois a matriz é de 0-3 
 def editInput(letra, numero):
-    if (letra == "A"):
+    if (letra == "A" or letra == 'a'):
         letra = 0
-    elif (letra == "B"):
+    elif (letra == "B" or letra == 'b'):
         letra = 1
-    elif (letra == "C"):
+    elif (letra == "C" or letra == 'c'):
         letra = 2
 
     x = int(numero) - 1
@@ -71,22 +71,6 @@ def jogada(matriz, pos, key):
         return True
     else:
         return False
-
-# Fica testando uma posição disponível, até retornar True
-def automatico(matriz, key):
-    x = randint(0, 2)
-    y = randint(0, 2)
-    vaga = True
-    ok = False
-    while vaga:
-        if posicaoDisponivel(matriz, x, y):
-            matriz[x][y] = str(key)
-            ok = True
-            vaga = False
-        else:
-            vaga = True
-        
-    return ok
 
 # Verifica se deu velha, a key é X ou O.
 def velha(tabuleiro, key, x, y):
@@ -145,6 +129,31 @@ def empate(tabuleiro, key):
             if (tabuleiro[i][j] == key):
                 soma += 1
     return soma
+
+# Fica testando uma posição disponível, até retornar True
+def automatico(matriz, key, key2):
+    valid = ''
+
+    x = randint(0, 2)
+    y = randint(0, 2)
+
+    print(x, y)
+    
+    if jogada(matriz, (x, y), key):
+        print("há vaga")
+        matriz[x][y] = str(key)
+        if not (velha(matriz, str(key), x, y)):
+            print("Automático Venceu!")
+            valid = '2'
+        elif (empate(matriz, key) == 4 and empate(matriz, key2) == 4):
+            print("Empate!")
+            valid = '3'
+        else:
+            valid = '0'
+    else:
+        valid = '1'
+        
+    return valid
 
 # Menu Principal
 # Gera o Tabuleiro e escolhe o jogador uma vez

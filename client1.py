@@ -115,6 +115,18 @@ try:
                         clientsocket.send('3'.encode())
                         oponente = True
                         suavez = False
+                    elif (valid == '2'):
+                        os.system('cls')
+                        print("Você Venceu!")
+                        oponente = False
+                        suavez = False
+                        jogando = False
+                    elif (valid == '3'):
+                        os.system('cls')
+                        print("Empate!")
+                        oponente = False
+                        suavez = False
+                        jogando = False
                     else:
                         os.system('cls')
                         print("Posição inválida! Tente outra vez!")
@@ -128,6 +140,20 @@ try:
                     if minhavez == '3':
                         oponente = False
                         suavez = True 
+                        break
+                    elif minhavez == '4':
+                        os.system('cls')
+                        print("Você Perdeu!")
+                        suavez = False
+                        oponente = False
+                        jogando = False
+                        break
+                    elif minhavez == '5':
+                        os.system('cls')
+                        print("Empate!")
+                        suavez = False
+                        oponente = False
+                        jogando = False
                         break
 
         elif op == '0':

@@ -30,10 +30,11 @@ def recvPosicao(cliente, tabuleiro, chave1, chave2):
     else:
         valid = '0'
         if not (velha(tabuleiro, chave1, x, y)):
-            print(x, y)
-            print("Você venceu!")
+            print("Alguém Venceu!")
+            valid = '2'
         elif (empate(tabuleiro, chave1) == 4 and empate(tabuleiro, chave2) == 4):
-            print("Empate")
+            print("Empate!")
+            valid = '3'
     
     return valid
 
@@ -152,6 +153,18 @@ def recebeOpcao(client):
                                     # time.sleep(0.5)
                                     jogando2 = True
                                     jogando1 = False
+                            elif (valid == '2'):
+                                jogador2.send('4'.encode())
+                                jogando2 = False
+                                jogando1 = False
+                                jogo = False
+                                break
+                            elif (valid == '3'):
+                                jogador2.send('5'.encode())
+                                jogando2 = False
+                                jogando1 = False
+                                jogo = False
+                                break
                         
                         while jogando2:
                             time.sleep(0.5)
@@ -170,6 +183,18 @@ def recebeOpcao(client):
                                     # time.sleep(0.5)
                                     jogando1 = True
                                     jogando2 = False
+                            elif (valid == '2'):
+                                jogador1.send('4'.encode())
+                                jogando1 = False
+                                jogando2 = False
+                                jogo = False
+                                break
+                            elif (valid == '3'):
+                                jogador1.send('5'.encode())
+                                jogando1 = False
+                                jogando2 = False
+                                jogo = False
+                                break
 
             elif op == '0':
                 print("Encerrando!")

@@ -31,7 +31,6 @@ try:
             else:
                 print("O automático começa!")
                 print("Sua letra é", init[1])
-                time.sleep(0.7)
                 oponente = True
                 jogando = True
 
@@ -43,7 +42,8 @@ try:
                     print("Sua vez!")
                     print("Sua letra é", init[1])
                     drawTabuleiro(tabuleiro)
-                    letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ')  
+
+                    letra, numero = input("Entre com uma letra (coluna) e um número (linha) separados por espaço: ").split(' ') 
                     clientsocket.send((letra + " " + numero).encode())
 
                     valid = clientsocket.recv(1024).decode()
@@ -69,7 +69,10 @@ try:
                         print("Posição inválida! Tente outra vez!")
                         print("Sua letra é", init[1])
                         time.sleep(0.5)
+                        oponente = False
+                        suavez = True
                         jogando = True
+                    
                     
                 while oponente:
                     validAut = clientsocket.recv(1024).decode()
@@ -167,22 +170,19 @@ try:
                     minhavez = clientsocket.recv(1024).decode()
                     if minhavez == '3':
                         oponente = False
-                        suavez = True 
-                        break
+                        suavez = True
                     elif minhavez == '4':
                         os.system('cls')
                         print("Você Perdeu!")
                         suavez = False
                         oponente = False
                         jogando = False
-                        break
                     elif minhavez == '5':
                         os.system('cls')
                         print("Empate!")
                         suavez = False
                         oponente = False
                         jogando = False
-                        break
 
         elif op == '0':
             print("Encerrando!")

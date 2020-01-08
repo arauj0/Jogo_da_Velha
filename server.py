@@ -181,6 +181,9 @@ def recebeOpcao(client):
                         jogador2 = clientes[0]
                         key_1 = key2
                         key_2 = key1
+
+                    # limpa a lista de clientes para um novo jogo
+                    del clientes[:]
         
                     # Começa o jogo
                     # Já que sempre o jogador1 vai começar, o loop dele é True
@@ -202,9 +205,7 @@ def recebeOpcao(client):
                                 passarvez = jogador1.recv(1024).decode()
                                 if passarvez == '3':
                                     print("Passou a vez")
-                                    # time.sleep(0.5)
                                     jogador2.send("3".encode())
-                                    # time.sleep(0.5)
                                     jogando2 = True
                                     jogando1 = False
                             elif (valid == '2'): # Venceu
@@ -212,13 +213,11 @@ def recebeOpcao(client):
                                 jogando2 = False
                                 jogando1 = False
                                 jogo = False
-                                break
                             elif (valid == '3'): # Empate
                                 jogador2.send('5'.encode())
-                                jogando2 = False
                                 jogando1 = False
+                                jogando2 = False
                                 jogo = False
-                                break
                         
                         while jogando2:
                             time.sleep(0.4)
@@ -233,9 +232,7 @@ def recebeOpcao(client):
                                 passarvez = jogador2.recv(1024).decode()
                                 if passarvez == '3':
                                     print("Passou a vez")
-                                    # time.sleep(0.5)
                                     jogador1.send("3".encode())
-                                    # time.sleep(0.5)
                                     jogando1 = True
                                     jogando2 = False
                             elif (valid == '2'): # Venceu
@@ -243,13 +240,11 @@ def recebeOpcao(client):
                                 jogando1 = False
                                 jogando2 = False
                                 jogo = False
-                                break
                             elif (valid == '3'): # Empate
                                 jogador1.send('5'.encode())
-                                jogando1 = False
                                 jogando2 = False
+                                jogando1 = False
                                 jogo = False
-                                break
 
             elif op == '0':
                 print("Encerrando!")
